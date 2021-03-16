@@ -224,9 +224,9 @@ end component;
     );
 
     with nivel select
-    final<="0100" when "00",
-          "1000" when "01",
-          "1100" when "10",
+    final<="0011" when "00",
+          "0111" when "01",
+          "1011" when "10",
           "1111" when "11",
           "0000" when others;
         
