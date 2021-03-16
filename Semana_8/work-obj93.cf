@@ -1,0 +1,13 @@
+v 4
+file . "estado7seg.vhd" "9ac583a6d46e4acdee994c9f745e8dd7eae297bc" "20210316041907.461":
+  entity estado7seg at 1( 0) + 0 on 21;
+  architecture comportamental of estado7seg at 11( 212) + 0 on 22;
+file . "fluxo_dados.vhd" "6c324ad5f28544cecda726bdd3cb84186ac06c48" "20210316041631.072":
+  entity fluxo_dados at 1( 0) + 0 on 17;
+  architecture estrutural of fluxo_dados at 39( 1242) + 0 on 18;
+file . "circuito_semana1.vhd" "ae16c73e4b198c6bce95f7d3ceffa49c544e6377" "20210316041722.420":
+  entity circuito_semana1 at 1( 0) + 0 on 19;
+  architecture estrutural of circuito_semana1 at 25( 830) + 0 on 20;
+file . "unidade_controle.vhd" "6516b748b0e9bab5b6f22e853e860246b8987b20" "20210316035013.224":
+  entity unidade_controle at 1( 0) + 0 on 15;
+  architecture fsm of unidade_controle at 37( 964) + 0 on 16;
