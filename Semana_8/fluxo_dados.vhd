@@ -32,7 +32,9 @@ entity fluxo_dados is
         conta_2: in std_logic;
         timeout2: out std_logic;
 		  fimRes: out std_logic;
-      nivel: in std_logic_vector (1 downto 0)
+      nivel: in std_logic_vector (1 downto 0);
+      limpaN: in std_logic;
+      registraN: in std_logic
     );
 end entity fluxo_dados;
 
@@ -58,8 +60,8 @@ architecture estrutural of fluxo_dados is
         ld : in std_logic;
         ent : in std_logic;
         enp : in std_logic;
-        D : in std_logic_vector (12 downto 0);
-        Q : out std_logic_vector (12 downto 0); -- sinais de saída
+        D : in std_logic_vector (14 downto 0);
+        Q : out std_logic_vector (14 downto 0); -- sinais de saída
         rco : out std_logic 
  );
   end component;
@@ -123,6 +125,16 @@ end component;
           Q:      out std_logic_vector(3 downto 0)
         );
       end component;
+
+    component registrador_2bits is
+      port (
+    clock:  in  std_logic;
+    clear:  in  std_logic;
+    enable: in  std_logic;
+    D:      in  std_logic_vector(1 downto 0);
+    Q:      out std_logic_vector(1 downto 0)
+  );
+  end component;
 	 
     component edge_detector is
         port (
@@ -132,11 +144,13 @@ end component;
           pulso  : out std_logic);
         end component;
     
-    signal great,zeraE_baixo,igual_out,menor,great_o,menor_o,enable_cin,rco_outc,or_JGD,zeraL_baixo,rco_outL,fim_L: std_logic;
+    signal great,zeraE_baixo,igual_out,menor,great_o,menor_o,enable_cin,rco_outc,or_JGD,zeraL_baixo,rco_outL,fim_L,temp3out, temp2out, temp1out: std_logic;
     signal enderecoMenorqueLimite, IgualLimite, ZeraT_baixo,zera2_baixo: std_logic;
     signal s_jogada, entrada_m: std_logic_vector (3 downto 0);
     signal contador_out, s_dado,s_endereco,s_lim: std_logic_vector (3 downto 0);
     signal final: std_logic_vector (3 downto 0);
+    signal nivel_o: std_logic_vector (1 downto 0);
+    signal s_timeout,tempo: std_logic_vector (14 downto 0);
     begin
 		  
         
@@ -176,8 +190,9 @@ end component;
         ld    => '1',
         ent   => '1',
         enp=>conta_T,
-        D=> "0000000000000", 
-        rco=>timeout
+        D=> "000000000000000", 
+        Q     => s_timeout
+      
     );
     Zera2_baixo<= not Zera_2;
     Conttemp2: contador_mod_2s port map (
@@ -223,12 +238,83 @@ end component;
           o_AEQB =>FimE
     );
 
-    with nivel select
+    compTempo0: comparador_85 port map (
+        i_A3  =>s_timeout(3),
+          i_B3   => tempo(3),
+          i_A2   =>s_timeout(2),
+          i_B2   => tempo(2),
+          i_A1   =>s_timeout(1),
+          i_B1   => tempo(1),
+          i_A0   =>s_timeout(0),
+          i_B0   => tempo(0),
+          i_AGTB =>'0',
+          i_ALTB => '0',
+          i_AEQB => temp1out,
+          -- saidas
+          o_AEQB =>timeout
+    );
+	 
+	 compTempo1: comparador_85 port map (
+        i_A3  =>s_timeout(7),
+          i_B3   => tempo(7),
+          i_A2   =>s_timeout(6),
+          i_B2   => tempo(6),
+          i_A1   =>s_timeout(5),
+          i_B1   => tempo(5),
+          i_A0   =>s_timeout(4),
+          i_B0   => tempo(4),
+          i_AGTB =>'0',
+          i_ALTB => '0',
+          i_AEQB => temp2out,
+          -- saidas
+          o_AEQB =>temp1out
+    );
+	 
+	 compTempo2: comparador_85 port map (
+        i_A3  =>s_timeout(11),
+          i_B3   => tempo(11),
+          i_A2   =>s_timeout(10),
+          i_B2   => tempo(10),
+          i_A1   =>s_timeout(9),
+          i_B1   => tempo(9),
+          i_A0   =>s_timeout(8),
+          i_B0   => tempo(8),
+          i_AGTB =>'0',
+          i_ALTB => '0',
+          i_AEQB => temp3out,
+          -- saidas
+          o_AEQB =>temp2out
+    );
+	 
+	 compTempo3: comparador_85 port map (
+        i_A3  =>'1',
+          i_B3   => '1',
+          i_A2   =>s_timeout(14),
+          i_B2   => tempo(14),
+          i_A1   =>s_timeout(13),
+          i_B1   => tempo(13),
+          i_A0   =>s_timeout(12),
+          i_B0   => tempo(12),
+          i_AGTB =>'0',
+          i_ALTB => '0',
+          i_AEQB => '1',
+          -- saidas
+          o_AEQB =>temp3out
+    );
+
+    with nivel_o select
     final<="0011" when "00",
           "0111" when "01",
           "1011" when "10",
           "1111" when "11",
           "0000" when others;
+
+    with nivel_o select
+    tempo<="100001001101000" when "00",
+           "001011011100000" when "10",
+           "001111101000000" when "01",
+           "000111110100000" when "11",
+           "000000000000000" when others;
         
 	 
     enderecoIgualLimite<=IgualLimite;
@@ -291,7 +377,17 @@ end component;
         D=>botoes,
         Q=>s_jogada);
         db_jogada<=s_jogada;
+
+        RegNivel: registrador_2bits port map(
+          clock=>clock,
+        clear=>limpaN,
+        enable=>registraN,
+        D=>nivel,
+        Q=>nivel_o
+        );
+        
         or_JGD<=botoes(0) or botoes(1) or botoes(2) or botoes(3);
+
         JGD: edge_detector port map(
             clock=>clock,
             reset=>reset,

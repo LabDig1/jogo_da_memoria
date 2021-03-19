@@ -30,7 +30,10 @@ entity unidade_controle is
     conta_2: out std_logic;
     timeout2: in std_logic;
 	 repete: in std_logic;
-    chegou: in std_logic
+    chegou: in std_logic;
+    limpaN: out std_logic;
+      registraN: out std_logic;
+		mostra_m: out std_logic
   );
 end entity;
 
@@ -103,6 +106,17 @@ begin
               '0' when others;
 	with Eatual select
     zera_2 <= '1' when  I1 | R4 | R1,
+              '0' when others;
+	with Eatual select
+    mostra_m <= '1' when  R3 | R2 | R4 | R1,
+              '0' when others;
+
+  with Eatual select
+    limpaN  <= '1' when  O,
+              '0' when others;
+
+  with Eatual select
+    registraN  <= '1' when  I1,
               '0' when others;
 
   with Eatual select

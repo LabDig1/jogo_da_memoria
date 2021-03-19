@@ -15,13 +15,13 @@ clr : in std_logic;
 ld : in std_logic;
 ent : in std_logic;
 enp : in std_logic;
-D : in std_logic_vector (12 downto 0);
-Q : out std_logic_vector (12 downto 0); -- sinais de saída
+D : in std_logic_vector (14 downto 0);
+Q : out std_logic_vector (14 downto 0); -- sinais de saída
 rco : out std_logic
  );
 end contador_mod;
 architecture comportamental of contador_mod is -- declaração da arquitetura
- signal IQ: integer range 0 to 8191;
+ signal IQ: integer range 0 to 32767;
 begin
  process (clock,ent,IQ) -- inicio do process do circuito
  begin
@@ -34,7 +34,7 @@ elsif ld='0' then IQ <= to_integer(unsigned(D));
 elsif ent='1' and enp='1' then
 -- ambos os sinais de controle precisam estar em 1
 -- para que a contagem seja realizada
-if IQ>=5000 then IQ <= 5000;
+if IQ>=32767 then IQ <= 32767;
 -- caso chegue no final da contagem, volta p/ 0
 else IQ <= IQ + 1;
 -- caso contrário, soma-se 1 no contador
@@ -44,7 +44,7 @@ else IQ <= IQ;
 -- lógico alto, o contador permanece em seu estado atual
 end if;
 end if;
-if IQ>=5000 and ent='1' then rco <= '1';
+if IQ>=32767 and ent='1' then rco <= '1';
 -- caso o contador tenha chegado no final, rco assume valor 1
 else rco <= '0';
 end if;

@@ -1,6 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
-entity circuito_semana1 is
+entity circuito_semana1_desafio is
     port(
         clock : in std_logic;
         reset : in std_logic;
@@ -22,7 +22,7 @@ entity circuito_semana1 is
     );
 end entity;
 
-architecture estrutural of circuito_semana1 is
+architecture estrutural of circuito_semana1_desafio is
     component fluxo_dados is
         port(
             clock : in std_logic;
@@ -54,7 +54,9 @@ architecture estrutural of circuito_semana1 is
         conta_2: in std_logic;
         timeout2: out std_logic;
 		  fimRes:out std_logic;
-          nivel: in std_logic_vector (1 downto 0)
+          nivel: in std_logic_vector (1 downto 0);
+          limpaN: in std_logic;
+      registraN: in std_logic
         );
     end component;
 
@@ -87,7 +89,10 @@ architecture estrutural of circuito_semana1 is
         conta_2: out std_logic;
         timeout2: in std_logic;
         repete: in std_logic;
-        chegou: in std_logic
+        chegou: in std_logic;
+        limpaN: out std_logic;
+      registraN: out std_logic;
+		mostra_m: out std_logic
         );
     end component;
 
@@ -109,19 +114,14 @@ architecture estrutural of circuito_semana1 is
     signal conta,zeraE,registra,clk,jogada,igual_i,escreve_baixo,escreve,db_tem_jogada,db_clock: std_logic;
     signal zeraL,contaL,contaE,fimE,fimL,jogada_feita,chavesIgualMemoria,enderecoIgualLimite_i,zera_T,conta_T,timeout: std_logic;
     signal zera_2, conta_2,timeout2,reset_m,tudo_aceso_baixo,tudo_aceso,chegou: std_logic;
-    signal mostra_memoria: std_logic_vector (3 downto 0);
+    signal mostra_memoria: std_logic;
     signal estad4: std_logic_vector (4 downto 0);
+    signal limpaN, registraN: std_logic;
     begin
-        tudo_aceso_baixo<= not chegou;
-        tudo_aceso<= not tudo_aceso_baixo;
-        mostra_memoria(0)<= memo4(0) and tudo_aceso_baixo;
-        mostra_memoria(1)<= memo4(1) and tudo_aceso_baixo;
-        mostra_memoria(2)<= memo4(2) and tudo_aceso_baixo;
-        mostra_memoria(3)<= memo4(3) and tudo_aceso_baixo;
-        leds(0)<=(botoes(0) and tudo_aceso_baixo) xor mostra_memoria(0);
-        leds(1)<=(botoes(1) and tudo_aceso_baixo) xor mostra_memoria(1);
-        leds(2)<=(botoes(2) and tudo_aceso_baixo) xor mostra_memoria(2);
-        leds(3)<=(botoes(3) and tudo_aceso_baixo) xor mostra_memoria(3);
+        
+        with mostra_memoria select
+		  leds<= botoes when '0',
+		  memo4 when '1';
         clk<=clock;
         FD: fluxo_dados port map(
             clock =>clk,
@@ -152,7 +152,9 @@ architecture estrutural of circuito_semana1 is
         conta_2=>conta_2,
         timeout2=>timeout2,
 		  fimRes=>chegou,
-          nivel=>nivel
+          nivel=>nivel,
+          limpaN=>limpaN,
+      registraN=> registraN
         );
         db_igual<=chavesIgualMemoria;
         UC: unidade_controle port map(
@@ -183,7 +185,10 @@ architecture estrutural of circuito_semana1 is
         conta_2=>conta_2,
         timeout2=>timeout2,
         repete=> repete,
-        chegou=>chegou
+        chegou=>chegou,
+        limpaN=>limpaN,
+      registraN=> registraN,
+		mostra_m=>mostra_memoria
         );
 
         escreve_baixo<= not escreve;
