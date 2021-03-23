@@ -40,7 +40,7 @@ entity unidade_controle is
 end entity;
 
 architecture fsm of unidade_controle is
-  type t_estado is (O, I1,I2,I3,I4,I5, J1,J2,J3 , C,  E,F,  L, G1,G2,G3,G4 ,R1,R2,R3,R4 ,Z1,Z2,Z3,  D0,D1,D2,D3,D4,DA,DE,DT);
+  type t_estado is (O, I1,I11, I2,I3,I4,I5, J1,J2,J3 , C,  E,F,  L, G1,G2,G3,G4 ,R1,R2,R3,R4 ,Z1,Z2,Z3,  D0,D1,D2,D3,D4,DA,DE,DT);
   signal Eatual, Eprox: t_estado;
 begin
   -- memoria de estado
@@ -71,6 +71,7 @@ begin
       D4 when Eatual=I1 and nivel="11" else
       D4 when Eatual=D4 and timeout2='0' else
       Z1 when Eatual=D4 and timeout2='1' else
+      I2 when Eatual=I11 else
       I2 when Eatual=I2 and jogada ='0' else
       I3 when Eatual=I2 and jogada ='1' else
       I4 when Eatual=I3 else
@@ -104,7 +105,7 @@ begin
       F when  Eatual=F and iniciar='0' and repete='0'else
 		Z2 when Eatual =Z1 else
 		Z3 when Eatual=Z2 and fimC='0' else
-		I2 when Eatual =Z2 and fimC='1' else
+		I11 when Eatual =Z2 and fimC='1' else
 		Z2 when Eatual=Z3 else
       R1 when  Eatual=F and repete='1' else
       R2 when Eatual=R1 else
@@ -175,7 +176,7 @@ with Eatual select
               with Eatual select
 
     zera <=   '0' when O | C | J3 | E | F | J2 | J1,
-              '1' when I1 | L | I5 | R1 | Z1,
+              '1' when I1 | I11|  L | I5 | R1 | Z1,
               '0' when others;
     
   with Eatual select

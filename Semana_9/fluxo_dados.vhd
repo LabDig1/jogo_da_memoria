@@ -323,13 +323,13 @@ nivel_out<=nivel_o;
 
         compJog: comparador_85 port map (
             i_A3  =>s_dado(3),
-	          i_B3   => s_jogada(3),
+	          i_B3   => botoes(3),
 	          i_A2   =>s_dado(2),
-	          i_B2   => s_jogada(2),
+	          i_B2   => botoes(2),
 	          i_A1   =>s_dado(1),
-	          i_B1   => s_jogada(1),
+	          i_B1   => botoes(1),
 	          i_A0   =>s_dado(0),
-	          i_B0   => s_jogada(0),
+	          i_B0   => botoes(0),
 	          i_AGTB =>'0',
 	          i_ALTB => '0',
 	          i_AEQB => '1',
