@@ -58,7 +58,7 @@ architecture estrutural of circuito_semana2 is
           nivel: in std_logic_vector (1 downto 0);
           limpaN: in std_logic;
       registraN: in std_logic;
-      nivel_out:  in std_logic_vector (1 downto 0)
+      nivel_out:  out std_logic_vector (1 downto 0)
         );
     end component;
 
